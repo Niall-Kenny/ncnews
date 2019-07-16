@@ -10,8 +10,14 @@ const { formatDates, formatComments, makeRefObj } = require("../utils/utils");
 exports.seed = connection => {
   const topicsInsertions = connection("topics").insert(topicData);
   const usersInsertions = connection("users").insert(userData);
-
-  return Promise.all([topicsInsertions, usersInsertions])
+  return connection.migrate
+    .rollback()
+    .then(() => {
+      return connection.migrate.latest();
+    })
+    .then(() => {
+      return Promise.all([topicsInsertions, usersInsertions]);
+    })
     .then(() => {
       const formattedArticle = formatDates(articleData);
       return connection
