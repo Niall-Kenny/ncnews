@@ -1,6 +1,6 @@
 exports.up = connection => {
   return connection.schema.createTable("comments", table => {
-    table.integer("comment_id").primary();
+    table.increments("comment_id").primary();
     table
       .string("author")
       .references("username")

@@ -1,7 +1,7 @@
 exports.up = connection => {
   return connection.schema.createTable("articles", table => {
     table.increments("article_id").primary();
-    table.string("title", 30).notNullable();
+    table.string("title").notNullable();
     table.text("body").notNullable();
     table.integer("votes").defaultTo(0);
     table
