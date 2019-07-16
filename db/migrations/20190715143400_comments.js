@@ -1,4 +1,5 @@
 exports.up = connection => {
+  console.log("creating comments table!");
   return connection.schema.createTable("comments", table => {
     table.increments("comment_id").primary();
     table
@@ -18,5 +19,6 @@ exports.up = connection => {
 };
 
 exports.down = connection => {
+  console.log("deleting comments table!");
   return connection.schema.dropTableIfExists("comments");
 };

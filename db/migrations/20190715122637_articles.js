@@ -1,4 +1,5 @@
 exports.up = connection => {
+  console.log("creating articles table!");
   return connection.schema.createTable("articles", table => {
     table.increments("article_id").primary();
     table.string("title").notNullable();
@@ -19,5 +20,6 @@ exports.up = connection => {
 };
 
 exports.down = connection => {
+  console.log("deleting articles table!");
   return connection.schema.dropTableIfExists("articles");
 };

@@ -7,5 +7,6 @@ exports.up = connection => {
 };
 
 exports.down = connection => {
+  console.log("deleting topics table!");
   return connection.schema.dropTableIfExists("topics");
 };
