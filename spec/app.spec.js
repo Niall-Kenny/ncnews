@@ -1,6 +1,6 @@
 process.env.NODE_ENV = "test";
 
-const app = require("../server/app.js");
+const { app } = require("../server/app.js");
 const request = require("supertest");
 const { expect } = require("chai");
 const connection = require("../db/connection.js");
@@ -34,6 +34,17 @@ describe("/api", () => {
       });
     });
   });
+  describe("/users/:username", () => {
+    it("GET/ returns a user object which should have the following properties:username,avatar_url, name", () => {
+      return request(app)
+        .get("/api/users/butter_bridge")
+        .expect(200)
+        .then(({ body: { user } }) => {
+          expect(user).to.have.all.keys("username", "avatar_url", "name");
+          expect(user).to.be.an("Object");
+        });
+    });
+  });
   describe("ERRORS", () => {
     it("returns 404 not found when requested a path that doesn't exist", () => {
       return request(app)
@@ -43,5 +54,6 @@ describe("/api", () => {
           expect(body.message).to.equal("404 Not Found");
         });
     });
+    it("/api/users/not-an-id", () => {});
   });
 });

@@ -139,7 +139,7 @@ describe("makeRefObj", () => {
   it("takes an empty array and returns an empty obj", () => {
     expect(makeRefObj([])).to.eql({});
   });
-  it("takes an array with a nested aritcle object. Returns a reference object. The key is equal to the title value and key equal to the article id", () => {
+  it("takes an array with a nested article object. Returns a reference object. The key is equal to the title value and key equal to the article id", () => {
     expect(makeRefObj([{ article_id: 1, title: "A" }])).to.eql({ A: 1 });
   });
   it("returns obj reference for multiple nested objects", () => {

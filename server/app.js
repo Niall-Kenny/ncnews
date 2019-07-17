@@ -1,10 +1,10 @@
 const app = require("express")();
-const { fetchTopics } = require("./controllers/controller-nc_news");
+const apiRouter = require("./routers/api-router");
 
-app.get("/api/topics", fetchTopics);
+app.use("/api", apiRouter);
 
 app.use("/*", (req, res, next) => {
   res.status(404).send({ message: "404 Not Found" });
 });
 
-module.exports = app;
+module.exports = { app, apiRouter };
