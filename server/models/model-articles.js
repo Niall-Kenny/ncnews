@@ -15,8 +15,7 @@ const selectArticle = article_id => {
     .where("articles.article_id", article_id)
     .join("comments", "articles.article_id", "comments.article_id")
     .groupBy("articles.article_id")
-    .count("comment_id as comment_count")
-    .then(article => article[0]);
+    .count("comment_id as comment_count");
 };
 
 const updateVotesOnArticle = (inc_votes = 0, article_id) => {
@@ -26,7 +25,7 @@ const updateVotesOnArticle = (inc_votes = 0, article_id) => {
     .where("article_id", article_id)
     .increment("votes", inc_votes)
     .returning("*")
-    .then(article => article[0]);
+    .then(article => article);
 };
 
 module.exports = { selectArticle, updateVotesOnArticle };

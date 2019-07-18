@@ -71,7 +71,7 @@ describe("/api", () => {
           );
         });
     });
-    it.only("PATCH/  accepts an object in the form { inc_votes: newVote }.newVote will indicate how much the votes property in the database should be updated by.returns updated article", () => {
+    it("PATCH/  accepts an object in the form { inc_votes: newVote }.newVote will indicate how much the votes property in the database should be updated by.returns updated article", () => {
       return request(app)
         .patch("/api/articles/1")
         .send({ inc_votes: 1 })
@@ -120,7 +120,7 @@ describe("/api", () => {
       });
       return Promise.all(testInvalidsMethods);
     });
-    it("returns 400 bad request using an id that could not exist on /api/articles/:article_id. The id hs to be an integer - sending  string will result in 400 ", () => {
+    it("GET/ returns 400 bad request using an id that could not exist on /api/articles/:article_id. The id hs to be an integer - sending  string will result in 400 ", () => {
       return request(app)
         .get("/api/articles/jeff")
         .expect(400)
@@ -128,11 +128,54 @@ describe("/api", () => {
           expect(message).to.equal(` invalid input syntax for integer: "jeff"`);
         });
     });
-    it("returns 404 on an article_id that doesn't exist for api/articles/:article_id", () => {
+    it("GET/ returns 404 on an article_id that doesn't exist for api/articles/:article_id", () => {
       return request(app)
         .get("/api/articles/99")
         .expect(404)
-        .then(() => {});
+        .then(({ body: { message } }) => {
+          expect(message).to.equal("article_id not found");
+        });
+    });
+    it("PATCH/ /article_id throws 400 on bad request e.g. `jeff`", () => {
+      return request(app)
+        .patch("/api/articles/jeff")
+        .send({ inc_votes: 1 })
+
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).to.equal(` invalid input syntax for integer: "jeff"`);
+        });
+    });
+    it("PATCH/ returns 404 on an article_id that doesn't exist for api/articles/:article_id", () => {
+      return request(app)
+        .patch("/api/articles/99")
+        .send({ inc_votes: 1 })
+        .expect(404)
+        .then(({ body: { message } }) => {
+          expect(message).to.equal("article_id not found");
+        });
+    });
+    it("PATCH/api/articles/:article_id returns 400 when `inc_votes` has an invalid value e.g. `cat` ", () => {
+      return request(app)
+        .patch("/api/articles/1")
+        .send({ inc_votes: "cat" })
+        .expect(400)
+        .then(({ body: { message } }) => {
+          console.log(message);
+          expect(message).to.equal(` invalid input syntax for integer: "NaN"`);
+        });
+    });
+    it("returns 405 to a non existent method on /api/articles/:article_id", () => {
+      const invalidMethods = ["put", "delete"];
+      const testInvalidsMethods = invalidMethods.map(method => {
+        return request(app)
+          [method]("/api/articles/1")
+          .expect(405)
+          .then(res => {
+            expect(res.body.message).to.equal("method not allowed");
+          });
+      });
+      return Promise.all(testInvalidsMethods);
     });
   });
 });
