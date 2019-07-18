@@ -5,7 +5,12 @@ selectUser = username => {
     .select("*")
     .from("users")
     .where("username", username)
-    .then(user => user[0]);
+    .then(user => {
+      if (!user.length) {
+        return Promise.reject({ status: 404, message: "User Not Found" });
+      }
+      return user;
+    });
 };
 
 module.exports = { selectUser };
