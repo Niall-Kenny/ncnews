@@ -447,13 +447,32 @@ describe("/api", () => {
           expect(message).to.equal(` column "notAcolumn" does not exist`);
         });
     });
-    it.only("ERROR 400 when attempting to set order to something other than asc or desc", () => {
+    it("ERROR 400 when attempting to set order to something other than asc or desc", () => {
       return request(app)
-        .get("/api/articles?order=invalidorder")
+        .get("/api/articles?order=NotAnOrder")
         .expect(400)
         .then(({ body: { message } }) => {
           expect(message).to.equal("invalid query");
         });
     });
+    it("ERROR 400 if posted with a non existant author", () => {
+      return request(app)
+        .get("/api/articles?author=imNotAnAuthor")
+        .send({
+          title: "a fun title",
+          body: "article body",
+          topic: "mitch",
+          author: "invalidAUTHOR"
+        })
+        .expect(404)
+        .then(({ body: { message } }) => {
+          expect(message).to.equal(
+            "Author is not in the database or does not have any articles associated with them"
+          );
+        });
+    });
+  });
+  describe("/api/comments/:comment_id", () => {
+    it("responds with an object keyed with comment", () => {});
   });
 });

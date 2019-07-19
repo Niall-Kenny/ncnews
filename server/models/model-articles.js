@@ -46,6 +46,9 @@ const selectAllArticles = ({
   author,
   topic
 }) => {
+  if (order !== "asc" && order !== "desc")
+    return Promise.reject({ status: 400, message: "invalid query" });
+
   return connection("articles")
     .select(
       "articles.author",
@@ -65,7 +68,20 @@ const selectAllArticles = ({
       if (topic) return query.where({ topic });
     })
     .then(articles => {
-      return articles;
+      if (!articles.length && author)
+        return Promise.reject({
+          status: 404,
+          message:
+            "Author is not in the database or does not have any articles associated with them"
+        });
+      //Checking that the Topic is present in the database and that there are articles associated with them
+      else if (!articles.length && topic)
+        return Promise.reject({
+          status: 400,
+          message:
+            "Topic is not in the database or does not have any articles associated with it"
+        });
+      else return articles;
     });
 };
 

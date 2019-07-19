@@ -3,7 +3,7 @@ const app = express();
 const apiRouter = require("./routers/api-router");
 const {
   routeError,
-  userNotFound,
+  customError,
   psqlError
 } = require("./error_handlers/errors");
 
@@ -11,7 +11,7 @@ app.use(express.json());
 
 app.use("/api", apiRouter);
 
-app.use(userNotFound);
+app.use(customError);
 app.use(psqlError);
 app.use(routeError);
 

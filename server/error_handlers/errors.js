@@ -1,8 +1,8 @@
-const userNotFound = (err, req, res, next) => {
-  console.log("<<<inside user-Not-Found!>>>");
+const customError = (err, req, res, next) => {
+  console.log("<<<inside custom-error>>>");
 
-  if (err.status === 404) {
-    res.status(404).send({ message: err.message });
+  if (err.status) {
+    res.status(err.status).send({ message: err.message });
   } else {
     next(err);
   }
@@ -40,4 +40,4 @@ const invalidMethod = (req, res, next) => {
   res.status(405).send({ message: "method not allowed" });
 };
 
-module.exports = { routeError, invalidMethod, userNotFound, psqlError };
+module.exports = { routeError, invalidMethod, customError, psqlError };
