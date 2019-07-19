@@ -10,11 +10,16 @@ const userNotFound = (err, req, res, next) => {
 
 const psqlError = (err, req, res, next) => {
   console.log("<<<inside psql error!>>>");
-  const psqlCodes = ["22P02"];
-  if (psqlCodes.includes(err.code)) {
+
+  const psqlCodes = {
+    "22P02": { status: 400, message: err.message.split("-")[1] },
+    "23503": { status: 404, message: "Article does not exist" },
+    "42703": { status: 400, message: err.message.split("-")[1] }
+  };
+  if (psqlCodes[err.code]) {
     res
-      .status(400)
-      .send({ message: err.message.split("-")[1] || "Bad Request" });
+      .status(psqlCodes[err.code].status)
+      .send({ message: psqlCodes[err.code].message });
   } else {
     next(err);
   }

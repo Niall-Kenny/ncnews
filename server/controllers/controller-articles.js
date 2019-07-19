@@ -1,15 +1,14 @@
 const {
   selectArticle,
-  updateVotesOnArticle
+  updateVotesOnArticle,
+  insertComment
 } = require("../models/model-articles");
 
 const fetchArticle = (req, res, next) => {
   const { article_id } = req.params;
   selectArticle(article_id)
     .then(article => {
-      if (!article.length) {
-        next({ status: 404, message: "article_id not found" });
-      } else res.status(200).send({ article: article[0] });
+      res.status(200).send({ article });
     })
     .catch(err => {
       console.log(err);
@@ -23,12 +22,28 @@ const updateArticle = (req, res, next) => {
 
   updateVotesOnArticle(inc_votes, article_id)
     .then(article => {
-      if (!article.length) {
-        next({ status: 404, message: "article_id not found" });
-      } else res.status(200).send({ article: article[0] });
+      res.status(200).send({ article: article[0] });
     })
     .catch(err => {
       next(err);
     });
 };
-module.exports = { fetchArticle, updateArticle };
+
+const postComment = (req, res, next) => {
+  const { username, body } = req.body;
+
+  const { article_id } = req.params;
+  insertComment(username, body, article_id)
+    .then(comment => {
+      res.status(200).send({ comment: comment[0] });
+    })
+    .catch(err => {
+      next(err);
+    });
+};
+
+module.exports = {
+  fetchArticle,
+  updateArticle,
+  postComment
+};
