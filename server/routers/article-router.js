@@ -2,12 +2,15 @@ const articleRouter = require("express").Router();
 const {
   fetchArticle,
   updateArticle,
-  postComment
+  postComment,
+  getAllArticles
 } = require("../controllers/controller-articles");
 const {
   fetchCommentsByArticleId
 } = require("../controllers/controller-comments");
 const { invalidMethod } = require("../error_handlers/errors");
+
+articleRouter.get("/", getAllArticles);
 
 articleRouter
   .route("/:article_id")

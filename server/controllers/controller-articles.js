@@ -1,7 +1,8 @@
 const {
   selectArticle,
   updateVotesOnArticle,
-  insertComment
+  insertComment,
+  selectAllArticles
 } = require("../models/model-articles");
 
 const fetchArticle = (req, res, next) => {
@@ -42,8 +43,19 @@ const postComment = (req, res, next) => {
     });
 };
 
+const getAllArticles = (req, res, next) => {
+  selectAllArticles(req.query)
+    .then(articles => {
+      res.status(200).send({ articles });
+    })
+    .catch(err => {
+      next(err);
+    });
+};
+
 module.exports = {
   fetchArticle,
   updateArticle,
-  postComment
+  postComment,
+  getAllArticles
 };

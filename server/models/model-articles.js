@@ -40,8 +40,38 @@ const insertComment = (username, body, article_id) => {
     .returning("*");
 };
 
+const selectAllArticles = ({
+  sort_by = "created_at",
+  order = "desc",
+  author,
+  topic
+}) => {
+  return connection("articles")
+    .select(
+      "articles.author",
+      "articles.title",
+      "articles.article_id",
+      "articles.topic",
+      "articles.body",
+      "articles.created_at",
+      "articles.votes"
+    )
+    .orderBy(sort_by, order)
+    .count("comment_id as comment_count")
+    .leftJoin("comments", "articles.article_id", "comments.article_id")
+    .groupBy("articles.article_id")
+    .modify(query => {
+      if (author) return query.where({ "articles.author": author });
+      if (topic) return query.where({ topic });
+    })
+    .then(articles => {
+      return articles;
+    });
+};
+
 module.exports = {
   selectArticle,
   updateVotesOnArticle,
-  insertComment
+  insertComment,
+  selectAllArticles
 };

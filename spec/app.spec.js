@@ -334,20 +334,126 @@ describe("/api", () => {
           expect(message).to.equal(` column "Johnathan" does not exist`);
         });
     });
-    it("ERROR/ returns 405 to a non existent method on /api/articles/:article_id/comments", () => {
-      const invalidMethods = ["put", "delete"];
-      const testInvalidsMethods = invalidMethods.map(method => {
-        return request(app)
-          [method]("/api/articles/1")
-          .expect(405)
-          .then(res => {
-            expect(res.body.message).to.equal("method not allowed");
-          });
-      });
-      return Promise.all(testInvalidsMethods);
-    });
   });
-  describe("", () => {
-    it("", () => {});
+  describe("GET /api/articles", () => {
+    it("GET/ returns an object keyed with `articles` ", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).to.be.an("Array");
+          expect(articles.length).to.equal(12);
+        });
+    });
+    it("GET/ articles contains objects with keys of: `author`, `title`, `article_id,topic`, `created_at`, `votes`,`comment_count`", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles[0]).to.be.an("Object");
+          expect(articles[0]).to.contain.keys(
+            `author`,
+            `title`,
+            `article_id`,
+            `topic`,
+            `created_at`,
+            `votes`,
+            `comment_count`
+          );
+        });
+    });
+    it("accepts a sort_by query which defaults to date & order default to descending)", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).to.be.sortedBy("created_at", { descending: true });
+          expect(articles[0]).to.contain.keys(
+            `author`,
+            `title`,
+            `article_id`,
+            `topic`,
+            `created_at`,
+            `votes`,
+            `comment_count`
+          );
+        });
+    });
+    it("accepts a filter of author", () => {
+      return request(app)
+        .get("/api/articles?author=butter_bridge")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).to.be.sortedBy("created_at", { descending: true });
+          expect(articles[0]).to.contain.keys(
+            `author`,
+            `title`,
+            `article_id`,
+            `topic`,
+            `created_at`,
+            `votes`,
+            `comment_count`
+          );
+          expect(articles[0].author).to.equal("butter_bridge");
+        });
+    });
+    it("filters by topic", () => {
+      return request(app)
+        .get("/api/articles?topic=mitch")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).to.be.sortedBy("created_at", { descending: true });
+          expect(articles[0]).to.contain.keys(
+            `author`,
+            `title`,
+            `article_id`,
+            `topic`,
+            `created_at`,
+            `votes`,
+            `comment_count`
+          );
+          expect(articles[4].topic).to.equal("mitch");
+          expect(articles.length).to.equal(11);
+        });
+    });
+    it("handles non-default queries ", () => {
+      return request(app)
+        .get(
+          "/api/articles?topic=mitch&author=butter_bridge&sort_by=article_id&order=asc"
+        )
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).to.be.sortedBy("article_id", { descending: false });
+          expect(articles[0]).to.contain.keys(
+            `author`,
+            `title`,
+            `article_id`,
+            `topic`,
+            `created_at`,
+            `votes`,
+            `comment_count`
+          );
+          expect(articles[0].topic).to.equal("mitch");
+          expect(articles.length).to.equal(3);
+          expect(articles.every(article => article.author === "butter_bridge"))
+            .to.true;
+        });
+    });
+    it("ERROR 400 when attempting to sort by a non-existent column", () => {
+      return request(app)
+        .get("/api/articles?sort_by=notAcolumn")
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).to.equal(` column "notAcolumn" does not exist`);
+        });
+    });
+    it.only("ERROR 400 when attempting to set order to something other than asc or desc", () => {
+      return request(app)
+        .get("/api/articles?order=invalidorder")
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).to.equal("invalid query");
+        });
+    });
   });
 });
