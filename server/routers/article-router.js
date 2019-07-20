@@ -10,7 +10,10 @@ const {
 } = require("../controllers/controller-comments");
 const { invalidMethod } = require("../error_handlers/errors");
 
-articleRouter.get("/", getAllArticles).all(invalidMethod);
+articleRouter
+  .route("/")
+  .get(getAllArticles)
+  .all(invalidMethod);
 
 articleRouter
   .route("/:article_id")

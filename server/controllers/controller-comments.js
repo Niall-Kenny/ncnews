@@ -1,6 +1,7 @@
 const {
   selectCommentById,
-  updateCommentVotes
+  updateCommentVotes,
+  deleteCommentByID
 } = require("../models/model-comments");
 
 const fetchCommentsByArticleId = (req, res, next) => {
@@ -11,7 +12,6 @@ const fetchCommentsByArticleId = (req, res, next) => {
       res.status(200).send({ comments });
     })
     .catch(err => {
-      console.log(err);
       next(err);
     });
 };
@@ -24,11 +24,21 @@ const updateComment = (req, res, next) => {
 
   updateCommentVotes(inc_votes, comment_id)
     .then(comment => {
-      res.status(200).send({ comment });
+      res.status(201).send({ comment });
+    })
+    .catch(err => {
+      next(err);
+    });
+};
+removeComment = (req, res, next) => {
+  const { comment_id } = req.params;
+  deleteCommentByID(comment_id)
+    .then(() => {
+      res.status(204).send({});
     })
     .catch(err => {
       next(err);
     });
 };
 
-module.exports = { fetchCommentsByArticleId, updateComment };
+module.exports = { fetchCommentsByArticleId, updateComment, removeComment };

@@ -455,19 +455,23 @@ describe("/api", () => {
           expect(message).to.equal("invalid query");
         });
     });
-    it("ERROR 400 if posted with a non existant author", () => {
+    it("ERROR 404 if get with a non existant author", () => {
       return request(app)
         .get("/api/articles?author=imNotAnAuthor")
-        .send({
-          title: "a fun title",
-          body: "article body",
-          topic: "mitch",
-          author: "invalidAUTHOR"
-        })
         .expect(404)
         .then(({ body: { message } }) => {
           expect(message).to.equal(
             "Author is not in the database or does not have any articles associated with them"
+          );
+        });
+    });
+    it("ERROR 404 when searching for a non existent topic", () => {
+      return request(app)
+        .get("/api/articles?topic=imNotATopic")
+        .expect(404)
+        .then(({ body: { message } }) => {
+          expect(message).to.equal(
+            "Topic is not in the database or does not have any articles associated with it"
           );
         });
     });
@@ -477,7 +481,7 @@ describe("/api", () => {
       return request(app)
         .patch("/api/comments/1")
         .send({ inc_votes: 1 })
-        .expect(200)
+        .expect(201)
         .then(({ body: { comment } }) => {
           expect(comment).to.be.an("Object");
         });
@@ -486,7 +490,7 @@ describe("/api", () => {
       return request(app)
         .patch("/api/comments/1")
         .send({ inc_votes: 1 })
-        .expect(200)
+        .expect(201)
         .then(({ body: { comment } }) => {
           expect(comment).to.have.all.keys(
             "comment_id",
@@ -534,6 +538,34 @@ describe("/api", () => {
         .send({ inc_votes: "banana" })
         .then(({ body: { message } }) => {
           expect(message).to.eql(` invalid input syntax for integer: "NaN"`);
+        });
+    });
+  });
+  describe("DELETE /api/comments/:comment_id", () => {
+    it("should delete the comment and return 204 with no content", () => {
+      return request(app)
+        .delete("/api/comments/1")
+        .expect(204)
+        .then(({ body }) => {
+          expect(body).to.eql({});
+        });
+    });
+    it("DELETE ERROR returns 404 if the comment_id does not exist", () => {
+      return request(app)
+        .delete("/api/comments/9999")
+        .expect(404)
+        .then(({ body: { message } }) => {
+          expect(message).to.eql(`comment id: 9999 does not exist`);
+        });
+    });
+    it("DELETE ERROR returns 400 if the comment_id is in the incorrect format", () => {
+      return request(app)
+        .delete("/api/comments/NOT_AN_INTEGER")
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).to.eql(
+            ` invalid input syntax for integer: "NOT_AN_INTEGER"`
+          );
         });
     });
   });

@@ -39,6 +39,7 @@ const postComment = (req, res, next) => {
       res.status(200).send({ comment: comment[0] });
     })
     .catch(err => {
+      console.log(err.message);
       next(err);
     });
 };

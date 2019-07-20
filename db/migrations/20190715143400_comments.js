@@ -3,6 +3,7 @@ exports.up = connection => {
     table.increments("comment_id").primary();
     table
       .string("author")
+      .notNullable()
       .references("username")
       .inTable("users");
     table
@@ -13,7 +14,7 @@ exports.up = connection => {
     table
       .timestamp("created_at", { useTz: false })
       .defaultTo(connection.fn.now());
-    table.text("body");
+    table.text("body").notNullable();
   });
 };
 

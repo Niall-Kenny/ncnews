@@ -8,7 +8,6 @@ const selectArticle = article_id => {
     .where("articles.article_id", article_id)
     .groupBy("articles.article_id")
     .then(rows => {
-      console.log(rows);
       if (!rows.length)
         return Promise.reject({ status: 404, message: "article not found" });
       else {
@@ -77,7 +76,7 @@ const selectAllArticles = ({
       //Checking that the Topic is present in the database and that there are articles associated with them
       else if (!articles.length && topic)
         return Promise.reject({
-          status: 400,
+          status: 404,
           message:
             "Topic is not in the database or does not have any articles associated with it"
         });

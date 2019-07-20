@@ -47,5 +47,19 @@ const updateCommentVotes = (inc_votes = 0, comment_id) => {
       } else return comment[0];
     });
 };
+const deleteCommentByID = comment_id => {
+  return connection("comments")
+    .where("comment_id", comment_id)
+    .del()
+    .returning("*")
+    .then(comment => {
+      if (!comment.length) {
+        return Promise.reject({
+          status: 404,
+          message: `comment id: ${comment_id} does not exist`
+        });
+      } else return comment[0];
+    });
+};
 
-module.exports = { selectCommentById, updateCommentVotes };
+module.exports = { selectCommentById, updateCommentVotes, deleteCommentByID };

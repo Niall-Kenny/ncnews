@@ -10,11 +10,13 @@ const customError = (err, req, res, next) => {
 
 const psqlError = (err, req, res, next) => {
   console.log("<<<inside psql error!>>>");
+  console.log(err.code);
 
   const psqlCodes = {
     "22P02": { status: 400, message: err.message.split("-")[1] },
     "23503": { status: 404, message: "Article does not exist" },
-    "42703": { status: 400, message: err.message.split("-")[1] }
+    "42703": { status: 400, message: err.message.split("-")[1] },
+    "23502": { status: 400, message: "invalid input" }
   };
   if (psqlCodes[err.code]) {
     res
