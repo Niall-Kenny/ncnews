@@ -472,7 +472,69 @@ describe("/api", () => {
         });
     });
   });
-  describe("/api/comments/:comment_id", () => {
-    it("responds with an object keyed with comment", () => {});
+  describe("PATCH /api/comments/:comment_id", () => {
+    it("responds with an object keyed with `comment`", () => {
+      return request(app)
+        .patch("/api/comments/1")
+        .send({ inc_votes: 1 })
+        .expect(200)
+        .then(({ body: { comment } }) => {
+          expect(comment).to.be.an("Object");
+        });
+    });
+    it("PATCH should return 200 and an updated comment object with the new values", () => {
+      return request(app)
+        .patch("/api/comments/1")
+        .send({ inc_votes: 1 })
+        .expect(200)
+        .then(({ body: { comment } }) => {
+          expect(comment).to.have.all.keys(
+            "comment_id",
+            "author",
+            "article_id",
+            "votes",
+            "created_at",
+            "body"
+          );
+          expect(comment.votes).to.equal(17);
+        });
+    });
+    it("PATCH ERROR returns 404 if comment_id does not exist", () => {
+      return request(app)
+        .patch("/api/comments/9999")
+        .send({ inc_votes: 1 })
+        .expect(404)
+        .then(({ body: { message } }) => {
+          expect(message).to.eql("comment id: 9999 does not exist");
+        });
+    });
+    it("PATCH ERROR returns 400 if comment_id was in the incorrect format", () => {
+      return request(app)
+        .patch("/api/comments/NOT_AN_INTEGER")
+        .send({ inc_votes: 1 })
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).to.eql(
+            ` invalid input syntax for integer: "NOT_AN_INTEGER"`
+          );
+        });
+    });
+    it("PATCH ERROR returns 400 if there is no body on the request", () => {
+      return request(app)
+        .patch("/api/comments/1")
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).to.eql("invalid request");
+        });
+    });
+    it("PATCH ERROR returns 400 if the body on the request is in the incorrect format", () => {
+      return request(app)
+        .patch("/api/comments/1")
+        .expect(400)
+        .send({ inc_votes: "banana" })
+        .then(({ body: { message } }) => {
+          expect(message).to.eql(` invalid input syntax for integer: "NaN"`);
+        });
+    });
   });
 });

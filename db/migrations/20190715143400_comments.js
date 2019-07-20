@@ -9,7 +9,7 @@ exports.up = connection => {
       .integer("article_id")
       .references("article_id")
       .inTable("articles");
-    table.string("votes").defaultsTo(0);
+    table.integer("votes").defaultsTo(0);
     table
       .timestamp("created_at", { useTz: false })
       .defaultTo(connection.fn.now());

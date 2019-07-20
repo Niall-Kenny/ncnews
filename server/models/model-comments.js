@@ -31,4 +31,21 @@ const checkIdExists = article_id => {
     });
 };
 
-module.exports = { selectCommentById };
+const updateCommentVotes = (inc_votes = 0, comment_id) => {
+  return connection
+    .select("*")
+    .from("comments")
+    .where("comment_id", comment_id)
+    .increment("votes", inc_votes)
+    .returning("*")
+    .then(comment => {
+      if (!comment.length) {
+        return Promise.reject({
+          status: 404,
+          message: `comment id: ${comment_id} does not exist`
+        });
+      } else return comment[0];
+    });
+};
+
+module.exports = { selectCommentById, updateCommentVotes };
