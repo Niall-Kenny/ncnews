@@ -12,7 +12,6 @@ const fetchArticle = (req, res, next) => {
       res.status(200).send({ article });
     })
     .catch(err => {
-      console.log(err);
       next(err);
     });
 };
@@ -39,7 +38,6 @@ const postComment = (req, res, next) => {
       res.status(200).send({ comment: comment[0] });
     })
     .catch(err => {
-      console.log(err.message);
       next(err);
     });
 };

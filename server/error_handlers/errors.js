@@ -1,6 +1,4 @@
 const customError = (err, req, res, next) => {
-  console.log("<<<inside custom-error>>>");
-
   if (err.status) {
     res.status(err.status).send({ message: err.message });
   } else {
@@ -9,9 +7,6 @@ const customError = (err, req, res, next) => {
 };
 
 const psqlError = (err, req, res, next) => {
-  console.log("<<<inside psql error!>>>");
-  console.log(err.code);
-
   const psqlCodes = {
     "22P02": { status: 400, message: err.message.split("-")[1] },
     "23503": { status: 404, message: "Article does not exist" },
@@ -28,8 +23,6 @@ const psqlError = (err, req, res, next) => {
 };
 
 const routeError = (err, req, res, next) => {
-  console.log("<<<inside router error!>>>");
-
   if (err.status === 404) {
     res.status(404).send({ message: "route not found" });
   } else {
@@ -38,7 +31,6 @@ const routeError = (err, req, res, next) => {
 };
 
 const invalidMethod = (req, res, next) => {
-  console.log("<< inside invalid Method >>");
   res.status(405).send({ message: "method not allowed" });
 };
 
