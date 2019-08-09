@@ -54,7 +54,6 @@ const selectAllArticles = ({
       "articles.title",
       "articles.article_id",
       "articles.topic",
-      "articles.body",
       "articles.created_at",
       "articles.votes"
     )
