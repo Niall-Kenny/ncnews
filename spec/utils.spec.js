@@ -2,8 +2,10 @@ const { expect } = require("chai");
 const {
   formatDates,
   makeRefObj,
-  formatComments
+  formatComments,
+  formatTopicsPreview
 } = require("../db/utils/utils");
+const { testData } = require("./testData-formatTopicsPreview");
 
 describe("formatDates", () => {
   it("should return an empty array when given empty array", () => {
@@ -177,7 +179,7 @@ describe("makeRefObj", () => {
   });
 });
 
-describe.only("formatComments", () => {
+describe("formatComments", () => {
   it("take an array and returns an empty array", () => {
     expect(formatComments([])).to.eql([]);
   });
@@ -314,5 +316,26 @@ describe.only("formatComments", () => {
     expect(result).to.eql(expected);
     expect(input).to.eql(controlComment);
     expect(ref).to.eql(controlRef);
+  });
+});
+
+describe.only("FormatTopicsPreview", () => {
+  it("returns an object", () => {
+    expect(formatTopicsPreview(testData)).to.be.an("Object");
+  });
+  it("returns an object with keys: `topics`", () => {
+    expect(formatTopicsPreview(testData)).to.include.keys(`topics`);
+  });
+  it("has an `topics` key which has a value of an array. This array contains each topic object", () => {
+    const topicsPreview = formatTopicsPreview(testData);
+    expect(topicsPreview.topics).to.be.an("Array");
+    for (let i = 0; i < topicsPreview.topics; i++) {
+      expect(topicsPreview.topics[i]).to.include.key("slug");
+    }
+  });
+  it("has an `articles` key which has a value of an object. This object contains keys: `mitch`, `cats", () => {
+    const topicsPreview = formatTopicsPreview(testData);
+    expect(topicsPreview.articles).to.be.an("Object");
+    expect(topicsPreview.articles).to.include.keys("mitch", "cats");
   });
 });

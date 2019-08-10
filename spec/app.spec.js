@@ -40,6 +40,31 @@ describe("/api", () => {
           expect(topics[0]).to.have.all.keys("slug", "description");
         });
     });
+
+    describe("/preview", () => {
+      it("GET should return an object with a key of `topicsPreview`", () => {
+        return request(app)
+          .get("/api/topics/preview")
+          .expect(200)
+          .then(({ body: { topicsPreview } }) => {
+            expect(topicsPreview)
+              .to.be.an("Object")
+              .with.keys("articles", "topics");
+          });
+      });
+      it("returns invalid method when an invalid request is sent", () => {
+        const invalidMethods = ["put", "patch", "delete"];
+        const testInvalidsMethods = invalidMethods.map(method => {
+          return request(app)
+            [method]("/api/users/butter_bridge")
+            .expect(405)
+            .then(res => {
+              expect(res.body.message).to.equal("method not allowed");
+            });
+        });
+        return Promise.all(testInvalidsMethods);
+      });
+    });
   });
   describe("/users/:username", () => {
     it("GET/ returns a user object which should have the following properties:username,avatar_url, name", () => {

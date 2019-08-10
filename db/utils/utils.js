@@ -26,4 +26,33 @@ const formatComments = (comments, articleRef) => {
   });
 };
 
-module.exports = { formatDates, formatComments, makeRefObj };
+const formatTopicsPreview = arrayOfArticlesAndTopics => {
+  const topicsPreview = {};
+  topicsPreview.articles = {};
+
+  for (let i = 0; i < arrayOfArticlesAndTopics.length; i++) {
+    if (arrayOfArticlesAndTopics[i].length < 1) i++;
+    if (arrayOfArticlesAndTopics[i][0].slug) {
+      topicsPreview.topics = arrayOfArticlesAndTopics[i];
+    }
+    if (arrayOfArticlesAndTopics[i][0].topic) {
+      topicsPreview.articles[arrayOfArticlesAndTopics[i][0].topic] =
+        arrayOfArticlesAndTopics[i];
+    }
+  }
+  return topicsPreview;
+};
+// return { articles: { mitch: [], cats: [] }, topics: 2 };
+
+// const TopicsPreview = {
+//   topics: arrayOfArticlesAndTopics
+//     .filter(element => element)
+//     .map(element => element)
+// };
+
+module.exports = {
+  formatDates,
+  formatComments,
+  makeRefObj,
+  formatTopicsPreview
+};
