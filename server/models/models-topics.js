@@ -22,7 +22,10 @@ const getThreeArticlesFromEachTopic = () => {
             "articles.votes"
           )
           .from("articles")
-          .where("topic", `${topic.slug}`)
+          .where({ topic: topic.slug })
+          .count("comment_id as comment_count")
+          .leftJoin("comments", "articles.article_id", "comments.article_id")
+          .groupBy("articles.article_id")
           .limit(3)
           .returning("*");
       });

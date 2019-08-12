@@ -42,7 +42,7 @@ describe("/api", () => {
     });
 
     describe("/preview", () => {
-      it("GET should return an object with a key of `topicsPreview`", () => {
+      it.only("GET should return an object with a key of `topicsPreview`", () => {
         return request(app)
           .get("/api/topics/preview")
           .expect(200)
